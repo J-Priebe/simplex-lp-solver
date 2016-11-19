@@ -1,0 +1,13 @@
+// Place all the styles related to the Home controller here.
+// They will automatically be included in application.css.
+// You can use Sass (SCSS) here: http://sass-lang.com/
+
+
+
+table {table-layout:fixed !important;}
+td {overflow:hidden; white-space:nowrap !important; with:120px !important;}
+
+input[type=number]{
+  display: inline-block !important;
+  width: 80px !important;
+}

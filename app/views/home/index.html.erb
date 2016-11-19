@@ -1,0 +1,67 @@
+<div class="column row small-centered text-center">
+
+<div id="num-dvs-container">
+Enter the number of decision variables (x1..xn):
+<input type="number" id="num-decision-variables" value="" size="2" /> 
+<input type="button" id="submit-num-vars-button" value="Go" />
+
+</div>
+
+<div id="inputs-container" style="display:none;">
+  <table id="inputs-table">
+    <tr id="of-row">
+      <td>
+        <select id="min-max-select">
+          <option value="max">MAX</option>
+          <option value="min">MIN</option>
+        </select>
+      </td>
+      <td> Z = </td>
+    </tr>
+    <tr id="constraints-header">
+      <td> </td>
+      <td> S.T. </td>
+    </tr>
+    <tr id="nz-row">
+      <td></td>
+      <td id="nz-constraint"> x1..xn </td>
+      <td> &nbsp; >= </td>
+      <td> 0 </td>
+    </tr>
+
+  </table>
+
+  <input type="button" id="add-constraint" value="Add Constraint..." />
+  </br></br>
+
+
+<!-- submit and move to next step -->
+<div class="button small" id="submit-constraints-button">Next: Standard Form</div> 
+
+</div>
+
+
+<div id="standard-form-container" style="display:none;">
+
+
+  <input type="button" id="calc-phase1-button" value= "Next: Phase One"/> 
+</div>
+
+<div id="phase-one-container" style="display:none;">
+
+
+  <input type="button" id="calc-phase2-button" value= "Next: Phase Two"/> 
+</div>
+
+
+<div id="phase-two-container" style="display:none;">
+
+
+  <input type="button" id="calc-solution-button" value="Next: Final Solution" />
+</div>
+
+
+<div id="final-solution-container" style="display:none;">
+</div>
+
+</div>
