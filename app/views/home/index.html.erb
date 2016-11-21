@@ -1,13 +1,31 @@
+
 <div class="column row small-centered text-center">
+
+<h1> Simplex LP Solver </h1>
+
+<h2> Solves linear min/max optimization problems using two-phase simplex method. Describes and shows the tableaus generated at each step.</h2>
+
+
+<h2> By James Priebe</h2>
+<h2> <a href="https://github.com/J-Priebe/simplex-lp-solver">Github Source</a></h2>
+</br>
+</br>
+
+</div>
+
+<div class="column row">
+
 
 <div id="num-dvs-container">
 Enter the number of decision variables (x1..xn):
-<input type="number" id="num-decision-variables" value="" size="2" /> 
-<input type="button" id="submit-num-vars-button" value="Go" />
+<input type="number" id="num-decision-variables" min="1" value="1" size="2" /> 
+<div class="button medium" id="submit-num-vars-button" >Next</div>
 
 </div>
 
 <div id="inputs-container" style="display:none;">
+Choose your problem type (minimization or maximization), and enter the decision variable coefficients on your objective function and constraints. Click the button to add additional constraints.
+
   <table id="inputs-table">
     <tr id="of-row">
       <td>
@@ -31,37 +49,40 @@ Enter the number of decision variables (x1..xn):
 
   </table>
 
-  <input type="button" id="add-constraint" value="Add Constraint..." />
+  <div class="button medium" id="add-constraint"  >Add Constraint...</div>
   </br></br>
 
 
-<!-- submit and move to next step -->
-<div class="button small" id="submit-constraints-button">Next: Standard Form</div> 
+</div>
+
+<div id ="solution-container" style="display:none;">
+
+
+<div id="standard-form-container">
+
+  <h2> Standard Form </h2>
+  Converted inequality constraints into equalities by adding slack variables.
+
+
+</div>
+
+<div id="phase-one-container">
+
 
 </div>
 
 
-<div id="standard-form-container" style="display:none;">
+<div id="phase-two-container">
 
 
-  <input type="button" id="calc-phase1-button" value= "Next: Phase One"/> 
-</div>
-
-<div id="phase-one-container" style="display:none;">
-
-
-  <input type="button" id="calc-phase2-button" value= "Next: Phase Two"/> 
 </div>
 
 
-<div id="phase-two-container" style="display:none;">
-
-
-  <input type="button" id="calc-solution-button" value="Next: Final Solution" />
+<div id="optimal-solution-container">
 </div>
 
-
-<div id="final-solution-container" style="display:none;">
 </div>
+
+<div class="button medium" id="solve-button" style="display:none;">Solve</div>
 
 </div>
