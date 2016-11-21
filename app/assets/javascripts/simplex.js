@@ -371,10 +371,7 @@ function createPhaseTwoTableau(){
 
   // // bring phase 1 basic variables back in
   var basic_vars = basic_variables(phase1_tableau);
-  console.log("PHASE 1 BASIC VARS (col, row): ");
-  for (var i = 0; i< basic_vars.length; i ++){
-    console.log(basic_vars[i]);
-  }
+
 
   for (var i = 0; i < basic_vars.length; i ++){
       pivot(matrix, basic_vars[i][0], basic_vars[i][1]);
