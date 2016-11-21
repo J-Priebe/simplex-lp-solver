@@ -1,4 +1,5 @@
 
+
 <div class="column row small-centered text-center">
 
 <h1> Simplex LP Solver </h1>
@@ -56,31 +57,50 @@ Choose your problem type (minimization or maximization), and enter the decision 
 </div>
 
 <div id ="solution-container" style="display:none;">
+   <ul class="accordion" data-accordion data-multi-expand="true" role="tablist">
 
 
-<div id="standard-form-container">
+<li class="accordion-item is-active">
+       <a href="#standard-form-container" role="tab" class="accordion-title">Standard Form</a>
+<div id="standard-form-container" class="accordion-content" role="tabpanel" data-tab-content>
 
   <h2> Standard Form </h2>
   Converted inequality constraints into equalities by adding slack variables.
 
 
 </div>
+</li>
 
-<div id="phase-one-container">
+<li class="accordion-item">
+  <a href="#phase-one-container" role="tab" class="accordion-title">Basic Feasible Solution</a>
+
+
+<div id="phase-one-container" class="accordion-content" role="tabpanel" data-tab-content>
 
 
 </div>
+</li>
+
+<li class="accordion-item ">
+    <a href="#phase-two-container" role="tab" class="accordion-title">Optimal Solution</a>
 
 
-<div id="phase-two-container">
+<div id="phase-two-container" class="accordion-content" role="tabpanel" data-tab-content>
 
 
 </div>
+</li>
 
 
-<div id="optimal-solution-container">
+<li class="accordion-item ">
+  <a href="#optimal-solution-container" role="tab" class="accordion-title">Result</a>
+
+<div id="optimal-solution-container" class="accordion-content" role="tabpanel" data-tab-content>
 </div>
 
+</li>
+
+  </ul>
 </div>
 
 <div class="button medium" id="solve-button" style="display:none;">Solve</div>

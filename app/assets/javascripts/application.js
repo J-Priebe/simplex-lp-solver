@@ -21,6 +21,8 @@
 var ready;
 ready = function() {
   $(document).foundation(); 
+
+  
 }
 
 $(document).on('turbolinks:load', ready);

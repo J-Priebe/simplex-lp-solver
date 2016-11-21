@@ -68,13 +68,7 @@ $(document).ready(function(){
 
 
     // replace inputs with their values
-    // $('#inputs-table').find(':input[type="number"]').each(function(){
-    //   var val = $(this).val();
-    //   $(this).replaceWith(val);
-    // });
     $('.constraint-coeff').each(function(){
-
-      console.log("uoh");
 
       var sym = " " + $(this).find('.sym').first().text() + " ";
       var val = parseInt($(this).find(':input[type="number"]').first().val());
@@ -148,7 +142,12 @@ $(document).ready(function(){
     if (checkUnbounded(original_tableau)){
 
       // done.
-      $('#standard-form-container').append('<p>Problem is unbounded.</p>');
+      alert("Unbounded!");
+      $('#standard-form-container').append('<p style="color:red;">Problem is unbounded.</p>');
+
+      $('#phase-one-container').parent().hide();
+      $('#phase-two-container').parent().hide();
+      $('#optimal-solution-container').parent().hide();
 
       $('#solution-container').show();
       $('#solve-button').hide();
@@ -177,14 +176,16 @@ $(document).ready(function(){
       while(1){
         status = computeNext(phase1_tableau);
 
+        if(status == 1){
+          break;
+        }
+
         var p1_table = createTableauElement(phase1_tableau);
         $('#phase-one-container').append('<p>Phase 1, Pivot '+ pivot_n + ':</p>');
         $('#phase-one-container').append(p1_table);
         pivot_n++;
 
-        if(status == 1){
-          break;
-        }
+
       }
 
       if (checkFeasibility(phase1_tableau)){
@@ -197,8 +198,11 @@ $(document).ready(function(){
 
 
       }else{
-        $('#phase-one-container').append('<p>Phase 1 is not feasible; therefore original problem is not feasible.</p>');
+        $('#phase-one-container').append('<p style="color:red;">Phase 1 is not feasible; therefore original problem is not feasible.</p>');
         
+        $('#phase-two-container').parent().hide();
+        $('#optimal-solution-container').parent().hide();
+
         $('#solution-container').show();
         $('#solve-button').hide();
         return;
@@ -219,19 +223,23 @@ $(document).ready(function(){
     var status;
     while(1){
       status = computeNext(phase2_tableau);
+
+      if(status == 1){
+        break;
+      }
+
       var p2_table = createTableauElement(phase2_tableau);
       $('#phase-two-container').append('<p>Phase 2, Pivot '+ pivot_n + ':</p>');
       $('#phase-two-container').append(p2_table);
       pivot_n++;
 
-      if(status == 1){
-        break;
-      }
     }
 
     optimal_solution = phase2_tableau.matrix[0][phase2_tableau.matrix[0].length - 1] / phase2_tableau.matrix[0][0] ;
+    optimal_solution = +optimal_solution.toFixed(2);
 
     $('#optimal-solution-container').append('<p>Optimal Z Value: </p>');
+
     $('#optimal-solution-container').append(optimal_solution);
 
 

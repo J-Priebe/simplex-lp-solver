@@ -95,7 +95,7 @@ function choose_pivot(matrix, column){
 function basic_variables(tableau){
 
   var matrix = tableau.matrix;
-  var num_columns = matrix[0].length;
+  var num_columns = original_tableau.matrix[0].length;
   var num_rows = matrix.length;
 
   var basic_variables = [];
@@ -313,7 +313,8 @@ function checkFeasibility(tableau){
 }
 
 
-// check if the tableau is unbounded
+// flip sign on every >= constraint coefficient,
+// then check for columns with non-positive coefficients
 function checkUnbounded(tableau){
 
   var matrix = tableau.matrix;
@@ -328,7 +329,9 @@ function checkUnbounded(tableau){
 
       // check for a positive coefficient in the column
       for(var i = 1; i < matrix.length; i++){
-        if (matrix[i][c] > 0){
+
+        var v = matrix[i][c] * constraints[i-1].sign;
+        if (v > 0){
           unbounded = false;
         }
       }
@@ -339,7 +342,9 @@ function checkUnbounded(tableau){
     }
   }
   return false;
+
 }
+
 
 
 // create phase 2 after solving phase 1.. otherwise it's just the BFS matrix?
@@ -364,8 +369,12 @@ function createPhaseTwoTableau(){
 
 
 
-  // bring phase 1 basic variables back in
+  // // bring phase 1 basic variables back in
   var basic_vars = basic_variables(phase1_tableau);
+  console.log("PHASE 1 BASIC VARS (col, row): ");
+  for (var i = 0; i< basic_vars.length; i ++){
+    console.log(basic_vars[i]);
+  }
 
   for (var i = 0; i < basic_vars.length; i ++){
       pivot(matrix, basic_vars[i][0], basic_vars[i][1]);
@@ -373,7 +382,7 @@ function createPhaseTwoTableau(){
 
 
 
-  var s = phase1_tableau.num_s;
+  var s = original_tableau.num_s;
 
   //matrix, ns, na, sym
   phase2_tableau = new Tableau(matrix, s, 0, "z" );
