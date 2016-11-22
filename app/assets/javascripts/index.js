@@ -59,7 +59,7 @@ $(document).ready(function(){
       });
       var sign = parseInt(row.find('.constraint-sign').first().find('select').val());
 
-      var rhs_coeff = parseInt(row.find('.rhs-coeff').first().find('input').val());
+      var rhs_coeff = parseFloat(row.find('.rhs-coeff').first().find('input').val());
 
       var ineq = new Inequality(constraintRow, sign, rhs_coeff);
       constraints.push(ineq);
@@ -71,7 +71,7 @@ $(document).ready(function(){
     $('.constraint-coeff').each(function(){
 
       var sym = " " + $(this).find('.sym').first().text() + " ";
-      var val = parseInt($(this).find(':input[type="number"]').first().val());
+      var val = parseFloat($(this).find(':input[type="number"]').first().val());
 
       var previous = $(this).prev().attr("class") == 'constraint-coeff';
 
@@ -95,7 +95,7 @@ $(document).ready(function(){
     $('.of-coeff').each(function(){
 
       var sym = " " + $(this).find('.sym').first().text() + " ";
-      var val = parseInt($(this).find(':input[type="number"]').first().val());
+      var val = parseFloat($(this).find(':input[type="number"]').first().val());
 
       var previous = $(this).prev().attr("class") == 'of-coeff';
 
