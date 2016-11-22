@@ -4,12 +4,19 @@
 
 
 
-table {table-layout:fixed !important;}
-td {overflow:hidden; white-space:nowrap !important; with:120px !important;}
+table {
+  //table-layout:fixed !important;
+}
+
+td {
+  overflow:hidden; 
+  white-space:nowrap !important; 
+  min-width:110px !important;
+}
 
 input[type=number]{
   display: inline-block !important;
-  width: 80px !important;
+  max-width: 70px !important;
 }
 
 h2{

@@ -10,7 +10,7 @@ $(document).ready(function(){
     $('#add-constraint').data('n', num_dvs);
 
     for (var i = 0; i < num_dvs-1; i++){
-      $('#of-row').find('td:last').after('<td class="of-coeff"><input type="number" value="0" size="1" /><span class="sym">x' + (i + 1) + '</span>&nbsp;+&nbsp;</td>');
+      $('#of-row').find('td:last').after('<td class="of-coeff"><input type="number" value="0" size="1" /><span class="sym">x' + (i + 1) + '</span>+</td>');
       $('#nz-constraint').before('<td></td>');
     }
     $('#of-row').find('td:last').after('<td class="of-coeff"><input type="number" value="0" size="1" /><span class="sym">x' + (num_dvs)+ '</span></td>');
@@ -66,65 +66,9 @@ $(document).ready(function(){
 
     });
 
+    disableInputs();
 
-    // replace inputs with their values
-    $('.constraint-coeff').each(function(){
-
-      var sym = " " + $(this).find('.sym').first().text() + " ";
-      var val = parseFloat($(this).find(':input[type="number"]').first().val());
-
-      var previous = $(this).prev().attr("class") == 'constraint-coeff';
-
-      var sign = (val < 0 ) ? " - " : ( (previous) ? " + " : " "); 
-
-      if(val == 0){
-        $(this).html(" ");
-      }else if (val == -1){
-          $(this).html(sign + sym);
-      }else if (val == 1){
-          $(this).html(sign + sym);
-      }else{
-          $(this).html(sign + Math.abs(val) + sym);  
-      }
-
-
-
-    });
-
-
-    $('.of-coeff').each(function(){
-
-      var sym = " " + $(this).find('.sym').first().text() + " ";
-      var val = parseFloat($(this).find(':input[type="number"]').first().val());
-
-      var previous = $(this).prev().attr("class") == 'of-coeff';
-
-      var sign = (val < 0 ) ? " - " : ( (previous) ? " + " : " "); 
-
-      if(val == 0){
-        $(this).html(" ");
-      }else if (val == -1){
-          $(this).html(sign + sym);
-      }else if (val == 1){
-          $(this).html(sign + sym);
-      }else{
-          $(this).html(sign + Math.abs(val) + sym);  
-      }
-
-
-
-    });
-
-
-    $('.constraint-sign').each(function(){
-      var text = $(this).find('select option:selected').text(); 
-      $(this).find('select').first().replaceWith(text);
-    });
-    $('#min-max-select').replaceWith($('#min-max-select').val());
-    $('#add-constraint').hide();
-
-
-
+    
 
     // create standard from tableau with slack variables
     createOriginalTableau(initial_objective_function, constraints);
@@ -142,7 +86,6 @@ $(document).ready(function(){
     if (checkUnbounded(original_tableau)){
 
       // done.
-      alert("Unbounded!");
       $('#standard-form-container').append('<p style="color:red;">Problem is unbounded.</p>');
 
       $('#phase-one-container').parent().hide();
@@ -171,12 +114,12 @@ $(document).ready(function(){
       $('#phase-one-container').append(p1_table);
 
       var pivot_n = 1;
-      var status;
+      var done;
       // returns true when final tableau is formed
       while(1){
-        status = computeNext(phase1_tableau);
+        done = computeNext(phase1_tableau);
 
-        if(status == 1){
+        if(done){
           break;
         }
 
@@ -193,12 +136,12 @@ $(document).ready(function(){
         createPhaseTwoTableau();
 
         var p2_table = createTableauElement(phase2_tableau);
-        $('#phase-two-container').append('<p>Phase Two: Original objective function, artifical variables removed, basic variables from Phase 1 brought in.</p>');
+        $('#phase-two-container').append('<p>Phase Two: Original objective function, artificial variables removed, basic variables from Phase 1 brought in.</p>');
         $('#phase-two-container').append(p2_table);
 
 
       }else{
-        $('#phase-one-container').append('<p style="color:red;">Phase 1 is not feasible; therefore original problem is not feasible.</p>');
+        $('#phase-one-container').append('<p style="color:red;">Artificial variables could not be brought to zero. Phase 1 is not feasible; therefore original problem is not feasible.</p>');
         
         $('#phase-two-container').parent().hide();
         $('#optimal-solution-container').parent().hide();
@@ -220,11 +163,11 @@ $(document).ready(function(){
     var pivot_n = 1;
 
     // returns true when final tableau is formed
-    var status;
+    var done;
     while(1){
-      status = computeNext(phase2_tableau);
+      done = computeNext(phase2_tableau);
 
-      if(status == 1){
+      if(done){
         break;
       }
 
@@ -235,12 +178,24 @@ $(document).ready(function(){
 
     }
 
-    optimal_solution = phase2_tableau.matrix[0][phase2_tableau.matrix[0].length - 1] / phase2_tableau.matrix[0][0] ;
-    optimal_solution = +optimal_solution.toFixed(2);
+   // optimal_solution = phase2_tableau.matrix[0][phase2_tableau.matrix[0].length - 1] / phase2_tableau.matrix[0][0] ;
+   // optimal_solution = +optimal_solution.toFixed(2);
 
-    $('#optimal-solution-container').append('<p>Optimal Z Value: </p>');
+    var optimal_solution = solution(phase2_tableau);
 
-    $('#optimal-solution-container').append(optimal_solution);
+    $('#optimal-solution-container').append('<p>Optimal Solution: </p>');
+
+
+    for (var i = 0; i < optimal_solution.length; i++){
+
+      var sym = optimal_solution[i][0];
+      var val = optimal_solution[i][1];
+
+      $('#optimal-solution-container').append('<p>' + sym + ' = ' + val + ' </p>');
+    }
+
+
+    //$('#optimal-solution-container').append(optimal_solution);
 
 
     $('#solution-container').show();
@@ -263,12 +218,6 @@ $(document).ready(function(){
   
 });
 
-
-
-// standard form in equality format (as opposed to tableau)
-function createStandardFormElement(tableau){
-
-}
 
 
 function createTableauElement (tableau){
@@ -316,7 +265,7 @@ function constraintRow(n){
 
 
   for (var i = 0; i < n-1; i++){
-    constraint.append('<td class="constraint-coeff"><input type="number" value="0" size="1" /><span class="sym">x' + (i+1) + '</span>&nbsp;+&nbsp;</td>');
+    constraint.append('<td class="constraint-coeff"><input type="number" value="0" size="1" /><span class="sym">x' + (i+1) + '</span>+</td>');
   }
   constraint.append('<td class="constraint-coeff"><input type="number" value="0" size="1" /><span class="sym">x' + (n) + '</span></td>');
 
@@ -327,5 +276,71 @@ function constraintRow(n){
   constraint.append(rhs_td);
 
   return constraint;
+
+}
+
+
+function disableInputs(){
+  // replace inputs with their values
+  $('.constraint-coeff').each(function(){
+
+    var sym = " " + $(this).find('.sym').first().text() + " ";
+    var val = parseFloat($(this).find(':input[type="number"]').first().val());
+
+    var previous = $(this).prev().attr("class") == 'constraint-coeff';
+
+    var sign = (val < 0 ) ? " - " : ( (previous) ? " + " : " "); 
+
+    if(val == 0){
+      $(this).html(" ");
+    }else if (val == -1){
+        $(this).html(sign + sym);
+    }else if (val == 1){
+        $(this).html(sign + sym);
+    }else{
+        $(this).html(sign + Math.abs(val) + sym);  
+    }
+
+
+
+  });
+
+
+  $('.of-coeff').each(function(){
+
+    var sym = " " + $(this).find('.sym').first().text() + " ";
+    var val = parseFloat($(this).find(':input[type="number"]').first().val());
+
+    var previous = $(this).prev().attr("class") == 'of-coeff';
+
+    var sign = (val < 0 ) ? " - " : ( (previous) ? " + " : " "); 
+
+    if(val == 0){
+      $(this).html(" ");
+    }else if (val == -1){
+        $(this).html(sign + sym);
+    }else if (val == 1){
+        $(this).html(sign + sym);
+    }else{
+        $(this).html(sign + Math.abs(val) + sym);  
+    }
+
+
+
+  });
+
+  $('.rhs-coeff').each(function(){
+    var val = parseFloat($(this).find(':input[type="number"]').first().val());
+    $(this).html(val);
+  });
+
+  $('.constraint-sign').each(function(){
+    var text = $(this).find('select option:selected').text(); 
+    $(this).find('select').first().replaceWith(text);
+  });
+  $('#min-max-select').replaceWith($('#min-max-select').val());
+  $('#add-constraint').hide();
+
+
 
 }

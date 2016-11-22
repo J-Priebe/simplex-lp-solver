@@ -1,15 +1,15 @@
-
-var initial_objective_function= [];
-var constraints = [];
+var min; // true for minimization problem
 
 var original_tableau;
+var initial_objective_function= [];
+
+var constraints = [];
+
 var phase1_tableau;
 var phase1_objective = [];
 
-
 var phase2_tableau;
 
-var min;
 
 // sign: GTE = -1, LTE = 1
 // initial problem objective function and constraints
@@ -20,10 +20,7 @@ var Inequality = function(lhs, sign, rhs){
   this.rhs = rhs;
 }
 
-// function Tableau(obj, constraints){
-//   this.obj =  obj.slice();
-//   this.constraints = constraints.slice();
-// }
+
 var Tableau = function(matrix, ns, na, sym){
   this.matrix = matrix;
 
@@ -35,7 +32,7 @@ var Tableau = function(matrix, ns, na, sym){
 }
 
 
-
+// row: optional argument
 function pivot(matrix, column, row){
 
   // use ratio test to find pivot, or use provided row (when making artificial variables basic or bringing back variables for start of phase 2)
@@ -91,8 +88,8 @@ function choose_pivot(matrix, column){
 }
 
 // get col/row pairs of basic variables
-// excluding z ( and  rhs )
-function basic_variables(tableau){
+// excluding z, rhs, and possible artifical basic variables (since they are not included in phase 2)
+function basicVariables(tableau){
 
   var matrix = tableau.matrix;
   var num_columns = original_tableau.matrix[0].length;
@@ -122,6 +119,43 @@ function basic_variables(tableau){
 
 }
 
+// return a list of the optimal solution variables and their values
+function solution(tableau){
+
+  var solution = [];
+
+  var matrix = tableau.matrix;
+
+  var obj = [ tableau.sym, ( matrix[0][matrix[0].length -1] / matrix[0][0] ) ];
+
+  solution.push(obj);
+
+  // column, row pairs of basic variables
+  var basics = basicVariables(tableau);
+
+  var num_s = tableau.num_s;
+  var num_x = tableau.num_x;
+  var num_a = tableau.num_a;
+
+  for (var i = 0; i < basics.length; i ++){
+    var column = basics[i][0];
+    var row = basics[i][1];
+    var val = matrix[row][matrix[row].length -1] / matrix[row][column];
+    var sym;
+
+    if (column < num_x + 1){ // primary x variables
+      sym = "x" + column;
+    }else if ( column < num_s + 1){ // slacks
+      sym = "s" + (column - num_x);
+    }else{ // artificials
+      sym = "y" + (column - num_x - num_s);
+    }
+
+    solution.push([sym, val]);
+
+  }
+  return solution;
+}
 
 
 // standard form with slack variables
@@ -295,14 +329,10 @@ function computeNext(tableau){
   }
 
   // pivot on column with most negative reduced cost. 
-  // report unboundedness if column is all <= 0.
-  // if (min_col > 0 && checkUnbounded(matrix, min_col)){
-  //   return -1;
-  // }
-
   pivot(matrix, min_col);
 
-  return (done? 1 : 0);
+  //return (done? 1 : 0);
+  return done;
 
 }
 
@@ -370,7 +400,7 @@ function createPhaseTwoTableau(){
 
 
   // // bring phase 1 basic variables back in
-  var basic_vars = basic_variables(phase1_tableau);
+  var basic_vars = basicVariables(phase1_tableau);
 
 
   for (var i = 0; i < basic_vars.length; i ++){
