@@ -4,7 +4,7 @@
 
 <h1> Simplex LP Solver </h1>
 
-<h2> Solves linear min/max optimization problems using two-phase simplex method. Describes and shows the tableaus generated at each step.</h2>
+<p> Solves linear min/max optimization problems using two-phase simplex method. Describes and shows the tableaus generated at each step.</p>
 
 
 <h2> By James Priebe</h2>
@@ -16,13 +16,35 @@
 
 <div class="column row">
 
+<div class="row" id="initial-input-container">
 
-<div id="num-dvs-container">
-Enter # of Decision Variables (x1..xn):
-</br>
-<input type="number" id="num-decision-variables" min="1" value="1" size="2" /> 
-</br>
-<div class="button medium" id="submit-num-vars-button" > Next </div>
+  <div id="num-dvs-container" class="small-12 medium-5 columns">
+  Enter # of Decision Variables (x1..xn):
+  </br>
+  <input type="number" id="num-decision-variables" min="1" value="1" size="2" /> 
+  </br>
+  <div class="button medium" id="submit-num-vars-button" > Next </div>
+
+  </div>
+
+  <div class="small-12 medium-2 columns">
+   </br></br> OR </br></br>
+  </div>
+
+  <div class="small-12 medium-5 columns">
+    Upload a .txt file indicating max/min, then your objective function and constraint coefficients/signs, separated by spaces. For example:</br></br>
+
+    max</br>
+    2 3 1</br>
+    1 1 1 <= 40</br>
+    2 1 -1 >= 10</br>
+    0 -1 1 >= 10</br>
+
+    </br>
+    <input type="file" id="file-input" /> 
+
+  </div>
+
 
 </div>
 

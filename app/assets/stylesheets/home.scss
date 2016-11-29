@@ -8,17 +8,28 @@ table {
   //table-layout:fixed !important;
 }
 
+
 td {
   overflow:hidden; 
   white-space:nowrap !important; 
-  min-width:110px !important;
 }
 
 input[type=number]{
   display: inline-block !important;
-  max-width: 70px !important;
+  max-width: 100px !important;
+  min-width: 60px !important;
+}
+
+select{
+  min-width: 70px !important;
 }
 
 h2{
-  font-size: 1.0rem;
+  font-size: 1.1rem;
+}
+
+
+.remove-constraint{
+  font-weight: bold;
+  color: red;
 }

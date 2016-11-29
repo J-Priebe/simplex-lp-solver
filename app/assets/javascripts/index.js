@@ -19,7 +19,7 @@ $(document).ready(function(){
     var newRow = constraintRow(num_dvs);
     $('#nz-row').before(newRow);
 
-    $('#num-dvs-container').slideUp();
+    $('#initial-input-container').slideUp();
     $('#inputs-container').show();  
 
     $('#solve-button').show();
@@ -32,42 +32,9 @@ $(document).ready(function(){
 
     console.log("solving...");
 
-    // convert min to max
-    min = ($('#min-max-select').val() == 'min');
-
-    var zrow = [];
-
-    // z row for tableau
-    $('#of-row').children('.of-coeff').each(function(){
-      var val = $(this).find("input").val();
-      zrow.push(-1 * parseFloat(val));
-    });
-
-
-    initial_objective_function = new Inequality(zrow, null, 0);
-
-
-    // add all the constraints
-    $('.constraint-coeffs').each(function(){
-      var constraintRow = [];
-
-      var row = $(this);
-
-      row.children('.constraint-coeff').each(function(){
-        var input = parseFloat( $(this).find('input').val() );
-        constraintRow.push(input);
-      });
-      var sign = parseInt(row.find('.constraint-sign').first().find('select').val());
-
-      var rhs_coeff = parseFloat(row.find('.rhs-coeff').first().find('input').val());
-
-      var ineq = new Inequality(constraintRow, sign, rhs_coeff);
-      constraints.push(ineq);
-
-    });
+    parseInput();
 
     disableInputs();
-
     
 
     // create standard from tableau with slack variables
@@ -214,6 +181,10 @@ $(document).ready(function(){
     $('#nz-row').before(newRow);
   });
 
+  $('#inputs-table').on('click', '.remove-constraint', function(){
+    $(this).parent().parent().remove();
+  });
+
 
   
 });
@@ -259,24 +230,73 @@ function createTableauElement (tableau){
 }
 
 
-function constraintRow(n){
+// optionally pass values when reading from file to prepopulate the row
+function constraintRow(n, values){
 
-  var constraint= $('<tr class="constraint-coeffs"><td></td><td></td></tr>');
+  var constraint= $('<tr class="constraint-coeffs"><td></td><td><a class="remove-constraint" style="color:red;">X</a></td></tr>');
 
 
   for (var i = 0; i < n-1; i++){
-    constraint.append('<td class="constraint-coeff"><input type="number" value="0" size="1" /><span class="sym">x' + (i+1) + '</span>+</td>');
+    var v = values? values[i] : 0;
+    constraint.append('<td class="constraint-coeff"><input type="number" value="'+ v + '" size="1" /><span class="sym">x' + (i+1) + '</span>+</td>');
   }
-  constraint.append('<td class="constraint-coeff"><input type="number" value="0" size="1" /><span class="sym">x' + (n) + '</span></td>');
+  var v = values? values[n-1] : 0;
+  constraint.append('<td class="constraint-coeff"><input type="number" value="'+ v +'" size="1" /><span class="sym">x' + (n) + '</span></td>');
 
+  // select >= 
+  var selected = "";
+  if (values && values[n] == '>='){
+    selected= "selected";
+  }
 
-  var select= $('<td class="constraint-sign"><select><option value="1"> <= </option><option value="-1"> >= </option></select></td>');
+  var select= $('<td class="constraint-sign"><select value="-1"><option value="1"> <= </option><option value="-1" '+selected+'> >= </option></select></td>');
   constraint.append(select);
-  var rhs_td = $('<td class="rhs-coeff"><input type="number" value="0" min="0" size="1" /></td>')
+
+  var rhs_v = values? values[n+1] : 0;
+
+
+
+  var rhs_td = $('<td class="rhs-coeff"><input type="number" value="'+ rhs_v +'" min="0" size="1" /></td>');
   constraint.append(rhs_td);
 
   return constraint;
 
+}
+
+function parseInput(){
+   // convert min to max
+    min = ($('#min-max-select').val() == 'min');
+
+    var zrow = [];
+
+    // z row for tableau
+    $('#of-row').children('.of-coeff').each(function(){
+      var val = $(this).find("input").val();
+      zrow.push(-1 * parseFloat(val));
+    });
+
+
+    initial_objective_function = new Inequality(zrow, null, 0);
+
+
+    // add all the constraints
+    $('.constraint-coeffs').each(function(){
+      var constraintRow = [];
+
+      var row = $(this);
+
+      row.children('.constraint-coeff').each(function(){
+        var input = parseFloat( $(this).find('input').val() );
+        constraintRow.push(input);
+      });
+      var sign = parseInt(row.find('.constraint-sign').first().find('select').val());
+
+      var rhs_coeff = parseFloat(row.find('.rhs-coeff').first().find('input').val());
+
+      var ineq = new Inequality(constraintRow, sign, rhs_coeff);
+      constraints.push(ineq);
+
+    });
 }
 
 
@@ -340,6 +360,11 @@ function disableInputs(){
   });
   $('#min-max-select').replaceWith($('#min-max-select').val());
   $('#add-constraint').hide();
+
+
+  $('.remove-constraint').each(function(){
+    $(this).html("");
+  });
 
 
 
